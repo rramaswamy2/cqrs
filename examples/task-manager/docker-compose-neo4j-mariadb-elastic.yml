@@ -1,0 +1,91 @@
+version: '3'
+
+services:
+
+ # mysql-db:
+ #   image: mysql:5.7
+ #   environment:
+ #     MYSQL_ROOT_PASSWORD: root
+ #     MYSQL_DATABASE: uiv
+ #     MYSQL_USER: uiv
+ #     MYSQL_PASSWORD: uiv123
+ #     TZ: UTC
+ #   ports:
+ #     - "3306:3306"
+      
+  mariadb:
+    image: mariadb:latest
+    ports:
+       - '3306:3306'
+    restart: 'always'
+    volumes:
+     #- /var/lib/mysql/data:
+     #- /var/lib/mysql/logs:
+     #- /var/docker/maridb/conf:/etc/mysql
+      - mariadb-data:/var/lib/mysql
+    environment: 
+     MYSQL_ROOT_PASSWORD: changeme 
+     MYSQL_DATABASE:  mymariadb
+     MYSQL_USER: maria
+     MYSQL_PASSWORD:  changeme   
+      
+  neo4j: 
+      image : neo4j:3.5.3
+      
+      ports: 
+         - 7474:7474 #for HTTP
+         - 7687:7687 # for Bolt 
+      volumes:
+        - ./conf:/conf
+        - ./data:/data
+        - ./import:/import
+        - ./logs:/logs
+        - ./plugins:/plugins
+      environment: 
+          - NEO4J_AUTH=neo4j/test
+          - NEO4J_dbms_memory_pagecache_size=1G
+          - NEO4J_dbms.memory.heap.initial_size=1G
+          - NEO4J_dbms_memory_heap_max__size=1G
+          # - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+          # - NEO4J_apoc_import_file_enabled=true
+          # - NEO4J_dbms_shell_enabled=true
+          
+          # - NEO4J_dbms_connector_https_advertised__address="localhost:7473"
+          #- NEO4J_dbms_connector_http_advertised__address="localhost:7474"
+          # - NEO4J_dbms_connector_bolt_advertised__address="localhost:7687"
+          
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - cluster.name=elasticsearch
+      - network.host=0.0.0.0
+      - http.host=0.0.0.0
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      #- bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "OPTIONS=--ulimit nofile=65536:65536 nproc=256:512"
+      - logging_level_org_apache_kafka=ERROR
+      - xpack.security.enabled=true
+      - http.cors.allow-credentials=true
+      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length,Authorization
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    healthcheck:
+#      test: curl -sf localhost:9200/_cat/health | grep -qE 'green|yellow'
+#      interval: 30s
+#      timeout: 30s
+#      retries: 3
+#      start_period: 40s
+
+
+volumes:
+   mariadb-data:
+          
+          
+

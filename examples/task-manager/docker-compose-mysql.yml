@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+ 
+  db-task-manager:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: task-manager
+      MYSQL_USER: task
+      MYSQL_PASSWORD: manager
+      TZ: UTC
+    ports:
+      - "3316:3306"
+
+  db-eventstore:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: eventstore
+      MYSQL_USER: event
+      MYSQL_PASSWORD: store
+      TZ: UTC
+    ports:
+      - "3306:3306"
+      
+  redis: 
+    image: "redis:alpine"
+    command: [ "redis-server"] 
+    environment:
+      ALLOW_EMPTY_PASSWORD: "true"
+    ports: 
+      - "6379:6379"

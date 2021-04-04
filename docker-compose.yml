@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    
+  redis: 
+    image: "redis:alpine"
+    command: [ "redis-server"] 
+    environment:
+      ALLOW_EMPTY_PASSWORD: "true"
+    ports: 
+      - "6379:6379"    
+
+  dbeventstore:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: dyna
+      MYSQL_DATABASE: eventstore
+      MYSQL_USER: event
+      MYSQL_PASSWORD: store
+    ports:
+    - "3306:3306"
+    
+  pulsar:
+      image: apachepulsar/pulsar:2.5.0
+      ports:
+        - '8080:8080'
+        - '6650:6650'
+      expose:
+        - 8080
+        - 6650
+      environment: 
+         - PULSAR_MEM=" -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g"    
+      command:  >
+         /bin/bash -c 
+         "bin/apply-config-from-env.py conf/standalone.conf
+         && bin/pulsar standalone"
+
+
+  zookeeper:
+      image: "confluentinc/cp-zookeeper:5.2.1"
+      ports:
+          - '2181:2181'
+      environment:
+          ZOOKEEPER_CLIENT_PORT: 2181
+          ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+      image: "confluentinc/cp-kafka:5.2.1"
+      ports:
+          - '9092:9092'
+          - '29092:29092'
+      depends_on:
+          - zookeeper
+      environment:
+          KAFKA_BROKER_ID: 1
+          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+          KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          CONFLUENT_METRICS_ENABLE: 'false'
+          
+ 
+        

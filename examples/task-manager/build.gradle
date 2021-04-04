@@ -1,0 +1,138 @@
+buildscript {
+    repositories {
+        mavenCentral()
+      
+    }
+    dependencies {
+      
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.4.3'
+    }
+} 
+
+
+
+plugins {
+
+  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+repositories {
+mavenCentral()
+}
+
+
+
+project(':examples:task-manager:task-domain') {
+    dependencies {
+        implementation project(':messaging')
+        implementation project(':commandbus')
+        implementation project(':eventbus')
+        implementation project(':eventstore')
+        implementation project(':domain')
+        implementation project(':examples:task-manager:task-events')
+
+        testImplementation project(':junit-test')
+
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
+        implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+        testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
+        testImplementation group: 'org.awaitility', name: 'awaitility', version: '3.1.6'
+    }
+}
+
+project(':examples:task-manager:task-events') {
+    dependencies {
+        implementation project(':messaging')
+    }
+}
+
+project(':examples:task-manager:task-consumer-spring') {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+  
+
+    dependencies {
+        implementation project(':messaging')
+        implementation project(':eventbus')
+        implementation project(':examples:task-manager:task-events')
+
+        implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
+
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.1.4.RELEASE'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.4.RELEASE'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.4.RELEASE'
+
+        testImplementation project(':junit-test')
+
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.4.RELEASE'
+        testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
+        testImplementation group: 'org.awaitility', name: 'awaitility', version: '3.1.6'
+    }
+
+ 
+
+    jar {
+        enabled = false
+    }
+
+    
+    bootJar {
+    enabled = true
+    mainClassName = 'com.cqrs.example.taskmanager.consumer.Application'
+    
+    //archiveClassifier = 'boot'
+        manifest  {
+       attributes 'Start-Class' : 'com.cqrs.example.taskmanager.consumer.Application'
+    }
+    
+}
+      
+}
+
+project(':examples:task-manager:task-api-spring') {
+    apply plugin: 'java'
+     apply plugin: 'org.springframework.boot'
+   
+
+    dependencies {
+        implementation project(':messaging')
+        implementation project(':commandbus')
+        implementation project(':domain')
+        implementation project(':eventstore')
+        implementation project(':eventbus')
+        implementation project(':examples:task-manager:task-domain')
+        implementation project(':examples:task-manager:task-events')
+        implementation project(':examples:task-manager:task-consumer-spring')
+
+        implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
+
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.1.4.RELEASE'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.4.RELEASE'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.4.RELEASE'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.4.RELEASE'
+        implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
+
+        testImplementation project(':junit-test')
+
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.4.RELEASE'
+        testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
+        testImplementation group: 'org.awaitility', name: 'awaitility', version: '3.1.6'
+    }
+
+    jar {
+        enabled = false
+    }
+    
+    bootJar {
+    enabled = true
+   mainClassName = 'com.cqrs.example.taskmanager.api.Application'
+   // archiveClassifier = 'boot'
+    manifest  {
+       attributes 'Start-Class' : 'com.cqrs.example.taskmanager.api.Application'
+    }
+    }
+    
+   
+    
+
+}

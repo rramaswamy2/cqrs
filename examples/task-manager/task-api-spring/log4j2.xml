@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="log-path">/var/log/omnius/taskmanager/api</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta{[%thread]} %highlight{%-5level} %logger{36}.%M : %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}" />
+        </Console>
+        <RollingFile name="APIFile"
+            fileName="${sys:log-path}/taskmanager-api-std.log"
+            filePattern="${sys:log-path}/taskmanager-api-std-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta{[%thread]} %highlight{%-5level} %logger{36}.%M : %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="APIAuditFile"
+                     fileName="${sys:log-path}/taskmanager-api-audit.log"
+                     filePattern="${sys:log-path}/taskmanager-api-audit-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta{[%thread]} %highlight{%-5level} %logger{36}.%M : %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <logger name="task-api-spring-Std-Log" level="DEBUG" additivity="false">
+            <AppenderRef ref="APIFile" level="DEBUG"/>
+        </logger>
+        <logger name="task-api-spring-Audit-Log" level="INFO" additivity="false">
+            <AppenderRef ref="APIAuditFile" level="INFO"/>
+        </logger>
+        <Root level="INFO">
+            <AppenderRef ref="Console" level="INFO"/>
+            <AppenderRef ref="APIFile" level="DEBUG"/>
+        </Root>
+    </Loggers>
+</Configuration>

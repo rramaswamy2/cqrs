@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  eventstore:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: dyna
+      MYSQL_DATABASE: eventstore
+      MYSQL_USER: event
+      MYSQL_PASSWORD: store
+    ports:
+    - "3306:3306"
+
+
+
+
