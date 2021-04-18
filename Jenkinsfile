@@ -17,7 +17,7 @@ pipeline {
     environment {
         NEXUS_CRED = credentials('Nexus')
         GRADLE_NEXUS_CREDS = "-q -PnexusUser=${env.NEXUS_CRED_USR} -PnexusPassword=${env.NEXUS_CRED_PSW}"
-        DOCKER_HUB = 'dockerhub.tmbmarble.com'
+        DOCKER_HUB = 'hub.docker.com'
         DOCKER_TASK_CONSUMER_IMAGE = "${env.DOCKER_HUB}/cqrs-example/task-consumer-spring"
         DOCKER_TASK_API_IMAGE = "${env.DOCKER_HUB}/cqrs-example/task-api-spring"
     }
@@ -172,7 +172,7 @@ pipeline {
                 stage('example-task-manager') {
                     steps {
                         echo 'Create task manager boot JAR artifacts...'
-                        sh './gradlew -PnexusUrl=https://nexus.tmbmarble.com :examples:task-manager:task-consumer-spring:bootJar :examples:task-manager:task-api-spring:bootJar --stacktrace' 
+                        sh './gradlew -PnexusUrl=https://hub.docker.com :examples:task-manager:task-consumer-spring:bootJar :examples:task-manager:task-api-spring:bootJar --stacktrace' 
                              
                         
                         echo 'Creating Docker image for api and projections'
@@ -196,7 +196,7 @@ pipeline {
              //   sh "./gradlew ${GRADLE_NEXUS_CREDS} publish -x :jenkins:publish"
                 
                 echo 'Publishing java spring boot JAR modules to nexus...'
-                sh "./gradlew -PnexusUrl=https://nexus.tmbmarble.com ${GRADLE_NEXUS_CREDS} publish"
+                sh "./gradlew -PnexusUrl=https://hub.docker.com ${GRADLE_NEXUS_CREDS} publish"
 
                 echo 'Publishing docker images...'
                 sh """

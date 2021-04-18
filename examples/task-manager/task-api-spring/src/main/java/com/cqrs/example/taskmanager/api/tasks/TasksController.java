@@ -1,5 +1,7 @@
 package com.cqrs.example.taskmanager.api.tasks;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cqrs.commandbus.CommandDispatcher;
+import com.cqrs.domain.Repository;
 import com.cqrs.example.taskmanager.commands.AddDescriptionToTask;
 import com.cqrs.example.taskmanager.commands.ChangeTaskDueDate;
 import com.cqrs.example.taskmanager.commands.ChangeTaskTitle;
@@ -31,8 +34,6 @@ import com.cqrs.example.taskmanager.domain.TaskNothingChangedException;
 import com.cqrs.messaging.Command;
 import com.cqrs.messaging.ID;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
-
 @RestController
 @RequestMapping("/tasks")
 @EnableAutoConfiguration
@@ -40,10 +41,13 @@ public class TasksController {
 
     private final CommandDispatcher dispatcher;
     private final TaskRepository taskRepository;
+    
+    private final Repository<com.cqrs.example.taskmanager.domain.Task> aggrRepository;
 
-    public TasksController(CommandDispatcher dispatcher, TaskRepository taskRepository) {
+    public TasksController(CommandDispatcher dispatcher, TaskRepository taskRepository, Repository<com.cqrs.example.taskmanager.domain.Task> aggrRepository) {
         this.dispatcher = dispatcher;
         this.taskRepository = taskRepository;
+        this.aggrRepository = aggrRepository;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,6 +55,14 @@ public class TasksController {
         List<Task> tasks = taskRepository.findAll(new Sort(DESC, "creationDate"));
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
+    
+    @GetMapping(value = "/replay/{id}")
+    public String replayTaskById(@PathVariable String id) {
+    	aggrRepository.replay(ID.fromObject(id));
+    	return "Replay attempted on task with Id : "+ id +" please verify if projection store is updated..";
+       			
+    	}
+    
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> getTaskById(@PathVariable String id) {

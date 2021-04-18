@@ -8,7 +8,7 @@ services:
       args:
         DEPENDENCY: build/dependency
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-task-manager:3306/task-manager?useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-projectionstore:3306/task-manager?useSSL=false
       EVENTSTORE_DATASOURCE_URL: jdbc:mysql://db-eventstore:3306/eventstore?useSSL=false
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL57Dialect
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
@@ -28,18 +28,18 @@ services:
       args:
         DEPENDENCY: build/dependency
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-task-manager:3306/task-manager?useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-projectionstore:3306/task-manager?useSSL=false
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL57Dialect
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       KAFKA_CONSUMER_THREADS: 2
     depends_on:
-      - db-task-manager
+      - db-projectionstore
       - kafka
 
-  db-task-manager:
+  db-projectionstore:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: dyna
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: task-manager
       MYSQL_USER: task
       MYSQL_PASSWORD: manager
@@ -50,7 +50,7 @@ services:
   db-eventstore:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: dyna
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: eventstore
       MYSQL_USER: event
       MYSQL_PASSWORD: store
