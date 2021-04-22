@@ -65,4 +65,12 @@ public class InMemoryEventStore implements EventStore {
         }
         return new ArrayList<>();
     }
+
+	@Override
+	public List<String> getAllAggregateIds() {
+		
+		List<String> aggrIds = storage.keySet().stream().collect(Collectors.toList());
+		LOG.debug("aggregate ids : " + aggrIds);
+		return aggrIds;
+	}
 }

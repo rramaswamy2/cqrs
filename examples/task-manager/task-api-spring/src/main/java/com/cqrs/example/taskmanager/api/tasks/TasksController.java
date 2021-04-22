@@ -57,11 +57,20 @@ public class TasksController {
     }
     
     @GetMapping(value = "/replay/{id}")
-    public String replayTaskById(@PathVariable String id) {
+    public ResponseEntity<String> replayTaskById(@PathVariable String id) {
     	aggrRepository.replay(ID.fromObject(id));
-    	return "Replay attempted on task with Id : "+ id +" please verify if projection store is updated..";
+    	return new ResponseEntity<>("Replay attempted on task with Id : "+ id +" please verify if projection store entity is updated..", HttpStatus.OK);
        			
     	}
+    
+    @GetMapping(value = "/replay/all")
+    public ResponseEntity<String> replayAll() {
+    	List<String> aggrIds = aggrRepository.replayAll();
+    	return new ResponseEntity<>("Replay attempted on task with Ids : "+ aggrIds.toString() +" please verify if projection store is recreated..", HttpStatus.OK);
+       			
+    	}
+    
+    
     
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

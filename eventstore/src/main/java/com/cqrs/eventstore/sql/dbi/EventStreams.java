@@ -1,5 +1,6 @@
 package com.cqrs.eventstore.sql.dbi;
 
+import java.util.List;
 import java.util.Map;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -14,6 +15,9 @@ public interface EventStreams {
             "from events as e join streams as s on s.id=e.stream_id where s.id = :streamId")
     @RegisterMapper(EventMapper.class)
     Iterable<Map> loadEvents(@Bind("streamId") String streamId);
+    
+    @SqlQuery("select DISTINCT(stream_id) from events")
+    List<String> getAllAggregateIds();
 
     @SqlQuery("select version from streams where id = :streamId")
     Integer getCurrentStreamVersion(@Bind("streamId") String streamId);

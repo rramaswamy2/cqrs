@@ -1,6 +1,7 @@
 package com.cqrs.eventstore.local;
 
 import java.io.IOException;
+import java.util.List;
 
 import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
@@ -56,4 +57,10 @@ public class RecordManagerEventStore implements EventStore {
             }
         }));
     }
+
+	@Override
+	public List<String> getAllAggregateIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

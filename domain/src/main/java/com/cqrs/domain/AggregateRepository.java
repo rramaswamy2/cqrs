@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public abstract class AggregateRepository<T extends AggregateRoot> implements Re
     	Iterable<? extends Event> events = store.getById(aggregateId);
     	
     	int eventSize = Iterables.size(events);
-    	System.out.println("number of events to replay : " + eventSize);
+    	LOG.info("number of events to replay : " + eventSize);
     	if(events == null || Iterables.isEmpty(events)) {
     		LOG.info("no events found for specific aggregate instance ");
   		
@@ -70,6 +71,18 @@ public abstract class AggregateRepository<T extends AggregateRoot> implements Re
     	      String topicName = aggregate.getClass().getSimpleName();
     		  publisher.publish(topicName, events);
     	}
+    	
+    }
+    
+    @Override
+    public List<String> replayAll() {
+    	List<String> aggrIds = store.getAllAggregateIds();
+    	for(String aggrId : aggrIds) {
+    		LOG.info("attempting replay on aggregate : " + aggrId);
+    		ID aggregateId = ID.fromObject(aggrId);
+    		replay(aggregateId);
+    	}
+    	return aggrIds;
     	
     }
 

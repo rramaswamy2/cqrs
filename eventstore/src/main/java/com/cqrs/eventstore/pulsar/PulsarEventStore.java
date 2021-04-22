@@ -84,4 +84,10 @@ public class PulsarEventStore implements EventStore {
 		}
 	}
 
+	@Override
+	public List<String> getAllAggregateIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

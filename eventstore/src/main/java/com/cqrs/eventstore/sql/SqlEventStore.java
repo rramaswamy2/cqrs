@@ -2,19 +2,13 @@ package com.cqrs.eventstore.sql;
 
 import java.nio.charset.Charset;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
-import com.mysql.cj.jdbc.MysqlDataSource;
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.resource.ClassLoaderResourceAccessor;
-import liquibase.resource.ResourceAccessor;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionStatus;
@@ -32,6 +26,14 @@ import com.cqrs.messaging.Event;
 import com.cqrs.messaging.JsonDeserializer;
 import com.cqrs.messaging.JsonSerializer;
 import com.cqrs.messaging.Serializer;
+import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
+import com.mysql.cj.jdbc.MysqlDataSource;
+
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.ResourceAccessor;
 
 public class SqlEventStore implements EventStore {
     private static final Logger LOG = LoggerFactory.getLogger(SqlEventStore.class);
@@ -171,6 +173,17 @@ public class SqlEventStore implements EventStore {
                 throw e;
             }
         }
+    }
+    
+    @Override
+    public List<String> getAllAggregateIds() {
+    	  return dbi.withHandle(handle -> {
+              EventStreams streams = handle.attach(EventStreams.class);
+              List<String> aggrIds = streams.getAllAggregateIds();
+              LOG.debug("list of aggregate ids from SQL event store : " + aggrIds);
+              return aggrIds;
+          });
+    	
     }
 
     @Override

@@ -5,7 +5,7 @@ services:
   db-task-manager:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: dyna
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: task-manager
       MYSQL_USER: task
       MYSQL_PASSWORD: manager
@@ -16,7 +16,7 @@ services:
   db-eventstore:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: dyna
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: eventstore
       MYSQL_USER: event
       MYSQL_PASSWORD: store
