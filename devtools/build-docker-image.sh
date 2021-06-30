@@ -11,8 +11,7 @@
 ## - api
 ## - projections
 ##
-## Example:
-##   __PROG__ api dockerhub.dynacommercelab.com/omnius-vnext/order-api
+
 
 SCRIPTPATH=$(dirname "$(readlink -f "$0")")
 me=`basename "$0"`
